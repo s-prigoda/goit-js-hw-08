@@ -89,6 +89,7 @@ function createMarkup(arr) {
 }
 
 container.addEventListener("click", defaultOff);
+container.addEventListener("click", mouseClick);
 
 function defaultOff(event) {
   event.preventDefault();
@@ -101,20 +102,51 @@ const styles = `
   list-style: none;
   justify-content: center;
   max-width: 1440px;
-background: #fff;
-    padding: 100px 156px;
+  background: #fff;
+  padding: 100px 156px;
+  row-gap: 12px;
 }
 
 .gallery-item {
   flex-basis: calc((100% - 48px) / 3);
+  transition: transform 0.9s ease;
 }
 
 .gallery-image {
   width: 360px;
   height: 300px;
+  cursor: zoom-in;
+}
+
+.gallery-image:hover {
+  transform: scale(1.03);
+}
+
+.modal img {
+  cursor: zoom-out;
 }
 `;
 
 const styleGallery = document.createElement("style");
 styleGallery.textContent = styles;
 document.head.appendChild(styleGallery);
+
+function mouseClick(event) {
+  event.preventDefault();
+
+  if (event.target === event.currentTarget) {
+    return;
+  } else {
+    const instance = basicLightbox.create(`
+	<div class="modal">
+  <img src="${event.target.dataset.source}" alt="${event.target.alt}"/>
+  </div>
+`);
+
+    instance.show();
+    const modalImg = instance.element().querySelector("img");
+    modalImg.addEventListener("click", () => {
+      instance.close();
+    });
+  }
+}
